@@ -61,4 +61,11 @@ def update(id: int, request: schema.Blog, db: Session = Depends(get_db)):
     db.commit()
     return blog.first()
 
-   
+@app.post('/user')
+def create_user(request:schema.user,db:Session=Depends(get_db)):
+    new_user=models.User(name=request.name,email=request.email,password=request.password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+        
