@@ -3,7 +3,7 @@ from . import schema,models
 from .database import engine,SessionLocal
 from sqlalchemy.orm import Session
 from typing import List
-
+from .hashing import Hash
 app =FastAPI()
 models.Base.metadata.create_all(engine)
 
@@ -61,9 +61,12 @@ def update(id: int, request: schema.Blog, db: Session = Depends(get_db)):
     db.commit()
     return blog.first()
 
+
+
 @app.post('/user')
 def create_user(request:schema.user,db:Session=Depends(get_db)):
-    new_user=models.User(name=request.name,email=request.email,password=request.password)
+    
+    new_user=models.User(name=request.name,email=request.email,password=Hash.bcrypt(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
