@@ -14,4 +14,11 @@ class ShowBlog(BaseModel):
 class user(BaseModel):
     name:str
     email:str
-    password:str        
+    password:str      
+    
+class showuser(BaseModel):
+    name:str
+    email:str
+    class Config():
+        orm_mode=True
+          
