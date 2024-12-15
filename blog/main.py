@@ -2,6 +2,7 @@ from fastapi import FastAPI,Depends,status,Response,HTTPException
 from . import schema,models
 from .database import engine,SessionLocal
 from sqlalchemy.orm import Session
+from typing import List
 
 app =FastAPI()
 models.Base.metadata.create_all(engine)
@@ -12,6 +13,9 @@ def get_db():
         yield db
     finally:
         db.close()    
+@app.get('/')
+def Home():
+    return "Blog:Blog Data"
 
 @app.post('/blog',status_code=status.HTTP_201_CREATED)
 def create(request:schema.Blog,db:Session=Depends(get_db)):
@@ -22,12 +26,12 @@ def create(request:schema.Blog,db:Session=Depends(get_db)):
 
     return new_blog
 
-@app.get('/blog' )
+@app.get('/blog' ,response_model=List[schema.ShowBlog])
 def all(db:Session=Depends(get_db)):
     blogs=db.query(models.Blog).all()
     return blogs
 
-@app.get('/blog/{id}',status_code=status.HTTP_200_OK)
+@app.get('/blog/{id}',status_code=status.HTTP_200_OK,response_model=schema.ShowBlog)
 def show(id,respone:Response,db:Session=Depends(get_db)):
     blog=db.query(models.Blog).filter(models.Blog.id ==id).first()
     if not blog:
