@@ -28,4 +28,8 @@ class ShowBlog(BaseModel):
     body:str
     creator:showuser
     class Config():
-        orm_mode=True          
+        orm_mode=True        
+        
+class Login(BaseModel):
+    username:str
+    password:str          
