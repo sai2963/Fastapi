@@ -1,9 +1,10 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from .. import schema,hashing,models,database
 from sqlalchemy.orm import Session
-router=APIRouter()
+router=APIRouter(prefix='/user',tags=['users']
+)
 
-@router.post('/user' ,response_model=schema.showuser,tags=['users'])
+@router.post('/' ,response_model=schema.showuser)
 def create_user(request:schema.user,db:Session=Depends(database.get_db)):
     
     new_user=models.User(name=request.name,email=request.email,password=hashing.Hash.bcrypt(request.password))
@@ -12,7 +13,7 @@ def create_user(request:schema.user,db:Session=Depends(database.get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.get('/user',response_model=schema.showuser,tags=['users'])
+@router.get('/',response_model=schema.showuser)
 def get_user(id:int,db:Session=Depends(database.get_db)):
     user=db.query(models.User).filter(models.User.id==id).first()
     if not user:
